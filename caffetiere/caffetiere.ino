@@ -1,11 +1,14 @@
 #include <DS18B20.h>
 
 DS18B20 ds(2);
-const byte PIN_LED_R = 10;
-const byte PIN_LED_G = 9;
+const byte PIN_LED_R = 9;
+const byte PIN_LED_G = 10;
 const byte PIN_LED_B = 11;
 const byte PIN_ALIM = 3;
 const byte PIN_CHAUF = 4;
+const float temperature=56.0;
+const int delayTestA=20000;
+const int delayTestB=250000;
 float tempo0 = 0.0;
 float temp;
 bool effet = true;
@@ -25,16 +28,16 @@ void setup() {
     while (ds.selectNext()) {
       temp = ds.getTempC();
       Serial.println(temp);
-      if (temp > 55.0) {
+      if (temp > temperature) {
         statue = 2;
         break;
       }
-      if (millis() > 160000) {
+      if (millis() > delayTestB) {
         statue = 3;
         break;
       }
       if (temp - tempo0 < 0.10) {
-        if (millis() > 20000) {
+        if (millis() > delayTestA) {
           statue = 4;
           break;
         }
@@ -48,7 +51,7 @@ void setup() {
       }
       tempo0 = temp;
       if (effet) {
-        displayColor((byte)constrain(map(temp, 15.0, 56.0, 0, 255), 0, 255), 0, (byte)constrain(map(temp, 15.0, 56.0, 255, 0), 0, 255));
+        displayColor((byte)constrain(map(temp, 15.0, temperature, 0, 255), 0, 255), 0, (byte)constrain(map(temp, 15.0, temperature, 255, 0), 0, 255));
       }else{
         displayColor(0,0,0);
       }
